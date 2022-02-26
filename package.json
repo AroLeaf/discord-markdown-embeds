@@ -1,0 +1,11 @@
+{
+  "name": "discord-embed.md",
+  "type": "module",
+  "version": "1.0.0",
+  "decription": "",
+  "exports": "./index.js",
+  "license": "MIT",
+  "dependencies": {
+    "xregexp": "^5.1.0"
+  }
+}
