@@ -16,8 +16,8 @@
     "embed",
     "embeds"
   ],
-  "exports": "./index.js",
   "license": "MIT",
+  "exports": "./index.js",
   "dependencies": {
     "xregexp": "^5.1.0"
   },
