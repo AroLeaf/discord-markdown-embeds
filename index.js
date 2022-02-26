@@ -6,12 +6,15 @@ export const Lexer = _Lexer;
 export const Parser = _Parser;
 export const Renderer = _Renderer;
 
-export default {
-  render(md, options) {
-    return this.template(md).render(options)
-  },
+export function render(md, options) {
+  return this.template(md).render(options)
+}
 
-  template(md) {
-    return new Parser(new Lexer(md).parse()).parse();
-  }
+export function template(md) {
+  return new Parser(new Lexer(md).parse()).parse();
+}
+
+export default {
+  render, template,
+  Lexer, Parser, Renderer,
 }
