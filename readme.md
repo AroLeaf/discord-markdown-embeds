@@ -25,12 +25,12 @@ const md = `
 - hurt you
 `;
 
-// render directly
+// render directly (slow)
 DME.parse(md, { list: '-> ' });
 
 // create template
 const template = DME.template(md);
-// render template
+// render template (fast)
 template.render({ list: '-> ' });
 ```
 
@@ -45,6 +45,13 @@ This will probably change at some point.
 using `-` as title separator
 ##-line
 makes it an inline field
+
+## Commands
+commands are written as follows: {command:arg1,arg2,arg3 can have spaces too}
+this will be executed through `options.commands.command('arg1', 'arg2', 'arg3 can have spaces too')`
+commands may also be static values: {user}
+if `options.commands.user` is not a function it will be stringified and inserted directly
+using a command in markdown when it's not defined in the options will cause an error
 
 ## implemented:
 - the above
@@ -65,25 +72,24 @@ makes it an inline field
 
 ## Documentation
 
-### `DME.parse(md, [options])`
+### `DME.parse(md: string, options?: object): embeds`
 parses and renders a markdown string into embeds\
-`md`: a string containing markdown\
-`options`: options for `template.render()`\
-**returns:** `embeds`
+`md`: your markdown markdown\
+`options.commands`: an object of commands, commands can be functions or values with a `.toString` method\
+`options.list`: a string, overrides the list item icon
 
-### `DME.template(md)`
+### `DME.template(md: string): template`
 parses markdown into a template\
-`md`: a string containing markdown\
-**returns:** `template`
+`md`: your markdown
 
-### `template.parse([options])`
+### `template`
+a template to quickly render the same markdown multiple times with different commands
+#### `template.render(options?: object): embeds`
 renders the template\
 `options.commands`: an object of commands, commands can be functions or values with a `.toString` method\
-`options.list`: a string, overrides the list item icon\
-**returns:** `embeds`
+`options.list`: a string, overrides the list item icon
 
-### `embeds`
-an array of discord embed objects
-
-### `embeds.messages()`
+### `embeds: object[]`
+an array of discord embed objects\
+#### `embeds.messages(): object[]`
 divides the embeds into message objects, based on discord's restrictions (max 6000 chars / 10 embeds)
