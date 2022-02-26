@@ -91,7 +91,9 @@ export default class Renderer {
         this.pos++; continue;
       }
 
-      const { title, paragraph: description } = chunk.shift();
+      if (!chunk.length) { this.pos++; continue; }
+
+      const { title, paragraph: description } = chunk.shift() || {};
       const image = typeof this.chunks[this.pos + 1] === 'string' && this.chunks[this.pos + 1];
       const fields = chunk.length ? chunk.map(p => ({
         name: p.title,
@@ -111,9 +113,9 @@ export default class Renderer {
       const chunks = [[]];
       const length = a => a.flatMap(e => [e.title||'', e.description||''].concat(...e.fields?.map(f => [f.name, f.value])||[])).reduce((a,v) => a + v.length, 0);
       for (const embed of this) {
-        length(chunks.at(-1).concat(embed)) > 6000
-          ? chunks.push([embed])
-          : chunks.at(-1).push(embed);
+        length(chunks.at(-1).concat(embed)) <= 6000 && chunks.at(-1).length < 10
+          ? chunks.at(-1).push(embed)
+          : chunks.push([embed]);
       }
       return chunks.map(c => ({ embeds: c }));
     }
