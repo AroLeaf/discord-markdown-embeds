@@ -38,7 +38,8 @@ template.render({ list: '-> ' });
 
 ```md
 # Embed Markdown
-the first field of every embed gets set as the title + description of that embed. This will probably change at some point.
+the first field of every embed gets set as the title + description of that embed.
+This will probably change at some point.
 
 ##-in
 using `-` as title separator

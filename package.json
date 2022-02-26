@@ -2,7 +2,14 @@
   "name": "discord-markdown-embeds",
   "type": "module",
   "version": "1.1.0",
-  "decription": "",
+  "decription": "parses markdown into discord's rich embeds",
+  "author": {
+    "name": "AroLeaf",
+    "url": "https://leaf.moe"
+  },
+  "homepage": "https://github.com/AroLeaf/discord-markdown-embeds/blob/main/readme.md",
+  "repository": "github:AroLeaf/discord-markdown-embeds",
+  "keywords": ["discord", "markdown", "md", "embed", "embeds"],
   "exports": "./index.js",
   "license": "MIT",
   "dependencies": {
