@@ -1,6 +1,14 @@
-import nodes, {DocumentNode, Node} from './nodes.js';
-
 declare module 'discord-markdown-embeds';
+
+export class Node {
+  children: Node[];
+  constructor(children: Node[]);
+  render(options: renderOptions): string;
+}
+
+export class DocumentNode extends Node {
+  render(options: renderOptions): embeds;
+}
 
 export interface token {
   type: string,
@@ -54,7 +62,7 @@ export class Parser {
   type: Node|'inline';
   nodes: Node[];
 
-  constructor(tokens: token[], { type = nodes.document, pos = 0 }: { type: Node|'inline', pos: number } = {});
+  constructor(tokens: token[], { type = DocumentNode, pos = 0 }: { type: Node|'inline', pos: number } = {});
   find(predicate: function, cb: (position: number) => any): ReturnType<typeof cb>;
   wraps(predicate: function, cb: (tokens: token[]) => any, matchEnd: boolean = false): ReturnType<typeof cb> | boolean;
   push(node: Node): undefined;
