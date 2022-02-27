@@ -30,7 +30,7 @@ export default class Renderer {
     
     const length = (node.title?.length || 0) + node.paragraph.length;
     const limit = Math.min(6000 - this.chunks.at(-1).reduce((a, v) => a + (v.title.length) + v.paragraph.length, 0), 1024);
-    
+
     return (length <= limit && this.chunks.at(-1).length <= 25) 
       ? this.chunks.at(-1).push(node)
       : this.chunks.push([node]);
