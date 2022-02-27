@@ -28,7 +28,7 @@ export default class Lexer {
             raw: m[0],
             value: m[1],
           });
-          this.isStart = false;
+          this.isStart = m[1] == '\n';
           this.pos += 2;
         })) return;
         
@@ -173,9 +173,6 @@ export default class Lexer {
           this.pos += 2;
         })) return;
 
-        // indent
-        // if (this.isStart && this.match(/^[^\S\r\n]+/, m => this.pos += m[0].length)) return;
-
         // whitespace
         if (this.match(/^\s+/, m => {
           const count = XRegExp.match(m[0], /\n/g).length;
@@ -185,6 +182,12 @@ export default class Lexer {
             value: count,
           });
           this.isStart = !!count || this.isStart;
+          this.pos += m[0].length;
+        })) return;
+
+        // comment
+        if (this.match(/^<!--.+?-->/s, m => {
+          this.isStart = false;
           this.pos += m[0].length;
         })) return;
         

@@ -51,7 +51,7 @@ export class Lexer {
   isStart: boolean;
 
   constructor(markdown: string);
-  match(regex: RegExp|string, cb: (match: string[]) => any = () => true): ReturnType<typeof cb> | boolean;
+  match(regex: RegExp|string, cb: (match: string[]) => any): ReturnType<typeof cb> | boolean;
   push(token: token): undefined;
   parse(): token[];
 }
@@ -62,9 +62,9 @@ export class Parser {
   type: Node|'inline';
   nodes: Node[];
 
-  constructor(tokens: token[], { type = DocumentNode, pos = 0 }: { type: Node|'inline', pos: number } = {});
-  find(predicate: function, cb: (position: number) => any): ReturnType<typeof cb>;
-  wraps(predicate: function, cb: (tokens: token[]) => any, matchEnd: boolean = false): ReturnType<typeof cb> | boolean;
+  constructor(tokens: token[], { type, pos }?: { type?: Node|'inline', pos?: number });
+  find(predicate: Function, cb: (position: number) => any): ReturnType<typeof cb>;
+  wraps(predicate: Function, cb: (tokens: token[]) => any, matchEnd?: boolean): ReturnType<typeof cb> | boolean;
   push(node: Node): undefined;
   parse(): Node | Node[];
 }

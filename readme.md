@@ -1,4 +1,5 @@
 # Discord Markdown Embeds
+<!-- I can haz comment -->
 
 This package allows you to create discord embeds from markdown.
 
@@ -36,6 +37,7 @@ template.render({ list: '-> ' });
 
 ## Syntax
 
+
 ```md
 # Embed Markdown
 the first field of every embed gets set as the title + description of that embed.
@@ -59,12 +61,12 @@ using a command in markdown when it's not defined in the options will cause an e
 - styling (*italics*, **bold**, __underline__ and ~~strikethrough~~)
 - code blocks and inline code
 - images anywhere within the document (won't render inline though)
+- comments
 
 ## planned:
 - yaml front matter (for color, author, footer, timestamp etc)
-- comments
 
-## not planned:
+## not going to implement:
 - tables
 - html syntax
 - image links inside of regular links, styling, or lists
@@ -90,6 +92,6 @@ renders the template\
 `options.list`: a string, overrides the list item icon
 
 ### `embeds: object[]`
-an array of discord embed objects\
+an array of discord embed objects
 #### `embeds.messages(): object[]`
 divides the embeds into message objects, based on discord's restrictions (max 6000 chars / 10 embeds)
