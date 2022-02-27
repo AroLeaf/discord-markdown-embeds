@@ -1,7 +1,7 @@
 {
   "name": "discord-markdown-embeds",
   "type": "module",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "decription": "parses markdown into discord's rich embeds",
   "author": {
     "name": "AroLeaf",
