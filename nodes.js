@@ -80,7 +80,8 @@ export class CodeBlockNode extends Node {
   constructor(input) {
     super();
     const [lang, code] = input.split(/\n(.*)/s);
-    if (!code || /^\w/.test(lang)) {
+    console.log('lang:', lang.length, '\ncode:', code);
+    if (!code || /[^\w]/.test(lang)) {
       this.code = input;
       this.lang = 'plaintext';
     } else {
