@@ -31,10 +31,22 @@ export class CommandNode extends Node {
   }
 }
 
+export class QuoteNode extends Node {
+  render(options = {}) {
+    return options.html 
+      ? `<blockquote>${this.children.map(item => super.render(options, item)).join('\n')}</blockquote>`
+      : this.children.map(item => `> ${super.render(options, item)}`).join('\n');
+  }
+}
+
 export const ListNode = ordered => class extends Node {
   ordered = ordered;
-  render({ list = '● ', ...options} = {}) {
-    return this.children.map(item => `${list}${super.render(options, item)}`).join('\n');
+  render({ ul = '• ', ol = 'n. ', ...options } = {}) {
+    const marker = (this.ordered)
+      ? (typeof ol === 'string') ? n => ol.replace('n', n) : ol
+      : (typeof ol === 'string') ? () => ul : ul;
+    
+    return this.children.map((item, i) => `${marker(i)}${super.render(options, item)}`).join('\n');
   }
 }
 
@@ -52,24 +64,35 @@ export class LinkNode extends Node {
     this.title = title;
   }
 
-  render(options) {
-    return `[${super.render(options)}](${this.link}${this.title ? ` '${this.title.replace(/[\\']/g, '\\$&')}'` : ''})`
+  render(options = {}) {
+    return options.html 
+      ? `<a href="${this.link}" title="${this.title}">${super.render(options)}</a>`
+      : `[${super.render(options)}](${this.link}${this.title ? ` '${this.title.replace(/[\\']/g, '\\$&')}'` : ''})`;
   }
 }
 export class ImageNode extends LinkNode {
-  render(options) {
+  render() {
     return this.link;
   }
 }
 
 export class CodeBlockNode extends Node {
-  constructor(code) {
+  constructor(input) {
     super();
-    this.code = code;
+    const [lang, code] = input.split(/\n(.*)/s);
+    if (!code || /^\w/.test(lang)) {
+      this.code = input;
+      this.lang = 'plaintext';
+    } else {
+      this.code = code;
+      this.lang = lang;
+    }
   }
 
-  render() {
-    return '```' + this.code + '```';
+  render(options = {}) {
+    return options.html
+      ? `<pre class="language-${this.lang}"><code>${this.code}</code></pre>`
+      : '```' + `${this.lang}\n${this.code}` + '```';
   }
 }
 export class InlineCodeNode extends Node {
@@ -78,19 +101,34 @@ export class InlineCodeNode extends Node {
     this.code = code;
   }
 
-  render() {
-    return '`' + this.code + '`';
+  render(options = {}) {
+    return options.html 
+      ? `<code>${this.code}</code>`
+      : '`' + this.code + '`';
   }
 }
 
 export const StyleNode = sep => class extends Node {
   sep = sep;
-  render() {
-    return super.render([sep, ...this.children, sep]);
+  render(options = {}) {
+    if (!options.html) return super.render(options, [sep, ...this.children, sep]);
+    const tags = {
+      '**': ['<b>', '</b>'],
+      '__': ['<span style="text-decoration:underline;>"', '</span>'],
+      '~~': ['<s>', '</s>'],
+      '_': ['<i>', '</i>'],
+    }
+    return `${tags[sep][0]}${super.render(options)}${tags[sep][1]}`;
   }
 }
 
-export class ParagraphNode extends Node {} // maybe needs whitespace collapse
+export class ParagraphNode extends Node {
+  render(options = {}) {
+    return options.html
+      ? super.render(options, ['<p>', ...this.children, '</p>'])
+      : super.render(options);
+  }
+}
 export class WhitespaceNode extends Node {
   constructor(newlines) {
     super();
@@ -107,8 +145,10 @@ export class TextNode extends Node {
     this.text = text;
   }
 
-  render() {
-    return this.text;
+  render(options = {}) {
+    return options.html 
+      ? this.text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+      : this.text;
   }
 }
 
@@ -117,6 +157,7 @@ export default {
   command: CommandNode,
   unorderedList: ListNode(false),
   orderedList: ListNode(true),
+  quote: QuoteNode,
   title: TitleNode,
   link: LinkNode,
   image: ImageNode,
@@ -124,7 +165,7 @@ export default {
   inlineCode: InlineCodeNode,
   bold: StyleNode('**'),
   underline: StyleNode('__'),
-  italics: StyleNode('*'),
+  italics: StyleNode('_'),
   strikethrough: StyleNode('~~'),
   whitespace: WhitespaceNode,
   paragraph: ParagraphNode,

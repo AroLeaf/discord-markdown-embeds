@@ -5,6 +5,7 @@ export default {
     unordered: 'unordered_list',
     ordered: 'ordered_list',
   },
+  quote: 'quote',
   title: 'title',
   link: {
     start: 'link_start',

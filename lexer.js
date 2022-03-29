@@ -6,6 +6,7 @@ const regex = {
   command:        XRegExp(/^{(.+?)}/),
   ul:             XRegExp(/^([-*+]) /),
   ol:             XRegExp(/^(\d+)\. /),
+  quote:          XRegExp(/^> /),
   title:          XRegExp(/^#{1,6}([- ])/),
   linkStart:      XRegExp(/^!?\[/),
   linkMiddle:     XRegExp(/^\]\(/),
@@ -90,6 +91,17 @@ export default class Lexer {
           this.isStart = false;
           this.pos += m[0].length;
         })) return;
+
+        // quote /> /
+        if (this.isStart && this.match(regex.quote, m => {
+          this.push({
+            type: types.quote,
+            raw: m[0],
+            value: m[0],
+          });
+          this.isStart = false;
+          this.pos += m[0].length;
+        }));
 
         // title /^#{1,6}([- ])/
         if (this.isStart && this.match(regex.title, m => {

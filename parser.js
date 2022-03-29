@@ -71,6 +71,7 @@ export default class Parser {
             || t.type === types.list.ordered
             || t.type === types.title
             || t.type === types.code.block
+            || t.type === types.quote
           , children => {
             const items = splitArray(children, t => t.type === types.list.unordered);
             this.push(new nodes.unorderedList(items.map(i => new Parser(i, { type: 'inline' }).parse())));
@@ -85,9 +86,24 @@ export default class Parser {
             || t.type === types.list.unordered
             || t.type === types.title
             || t.type === types.code.block
+            || t.type === types.quote
           , children => {
             const items = splitArray(children, t => t.type === types.list.ordered);
             this.push(new nodes.orderedList(items.map(i => new Parser(i, { type: 'inline' }).parse())));
+            this.pos += children.length + 1;
+          }, true); break;
+        }
+
+        case types.quote: {
+          this.wraps(t => 
+            (t.type === types.whitespace && t.value > 1)
+            || t.type === types.list.unordered
+            || t.type === types.list.ordered  
+            || t.type === types.title
+            || t.type === types.code.block
+          , children => {
+            const items = splitArray(children, t => t.type === types.quote);
+            this.push(new nodes.quote(items.map(i => new Parser(i, { type: 'inline' }).parse())));
             this.pos += children.length + 1;
           }, true); break;
         }

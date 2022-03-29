@@ -83,4 +83,4 @@ export class Renderer {
 }
 
 export function template(md: string): DocumentNode;
-export function parse(md: string, options: renderOptions): embeds;
+export function render(md: string, options: renderOptions): embeds;
