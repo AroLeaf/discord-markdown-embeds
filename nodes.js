@@ -80,7 +80,6 @@ export class CodeBlockNode extends Node {
   constructor(input) {
     super();
     const [lang, code] = input.split(/\n(.*)/s);
-    console.log('lang:', lang.length, '\ncode:', code);
     if (!code || /[^\w]/.test(lang)) {
       this.code = input;
       this.lang = 'plaintext';
@@ -115,7 +114,7 @@ export const StyleNode = sep => class extends Node {
     if (!options.html) return super.render(options, [sep, ...this.children, sep]);
     const tags = {
       '**': ['<b>', '</b>'],
-      '__': ['<span style="text-decoration:underline;>"', '</span>'],
+      '__': ['<span style="text-decoration:underline;">', '</span>'],
       '~~': ['<s>', '</s>'],
       '_': ['<i>', '</i>'],
     }
