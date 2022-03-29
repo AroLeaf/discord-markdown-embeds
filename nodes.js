@@ -92,7 +92,7 @@ export class CodeBlockNode extends Node {
 
   render(options = {}) {
     return options.html
-      ? `<pre class="language-${this.lang}"><code>${this.code}</code></pre>`
+      ? `<pre class="language-${this.lang}"><code>${this.code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')}</code></pre>`
       : '```' + `${this.lang}\n${this.code}` + '```';
   }
 }
@@ -104,7 +104,7 @@ export class InlineCodeNode extends Node {
 
   render(options = {}) {
     return options.html 
-      ? `<code>${this.code}</code>`
+      ? `<code>${this.code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')}</code>`
       : '`' + this.code + '`';
   }
 }
