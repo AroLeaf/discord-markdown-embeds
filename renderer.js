@@ -17,7 +17,6 @@ export default class Renderer {
 
 
   push(node, options = {}) {
-    console.log(node);
     if (node.paragraph.length > 4096) throw new Error(`Paragrahs may only have 4096 characters, the following has ${node.paragraph.length} characters: ${node.paragraph}`)
     if (node.title?.length > 256) throw new Error(`Titles may only have 256 characters, the following has ${node.title.length} characters: ${node.title}`);
     
