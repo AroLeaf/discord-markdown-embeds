@@ -38,6 +38,27 @@ export default class Parser {
   }
 
   parse() {
+    {
+      const token = this.tokens[this.pos];
+      if (token && !(
+        token.type === types.title ||
+        token.type === types.whitespace && token.value > 1 ||
+        token.type === types.link.start && token.value
+      ) && this.type === nodes.document) {
+        this.wraps(t =>
+          (t.type === types.whitespace && t.value > 1)
+          || t.type === types.title
+          || (t.type === types.link.start && t.value)
+        , children => {
+          this.push(new Parser(children.concat(token), {
+            type: nodes.paragraph,
+          }).parse());
+          this.pos += children.length + 1;
+        }, true);
+      };
+    }
+    
+
     while(this.tokens[this.pos]) {
       const token = this.tokens[this.pos];
       switch(token.type) {
@@ -249,6 +270,6 @@ export default class Parser {
 
     return this.type === 'inline'
       ? this.nodes
-      : new this.type(this.nodes);
+      : new this.type(this.nodes, this.tokens.front);
   }
 }

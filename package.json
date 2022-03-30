@@ -19,7 +19,8 @@
   "license": "MIT",
   "exports": "./index.js",
   "dependencies": {
-    "xregexp": "^5.1.0"
+    "xregexp": "^5.1.0",
+    "yaml": "^2.0.0-11"
   },
   "types": "./index.d.ts"
 }

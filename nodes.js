@@ -11,6 +11,11 @@ export class Node {
 }
 
 export class DocumentNode extends Node {
+  constructor(children, front) {
+    super(children);
+    this.front = front;
+  }
+
   render(options) {
     return new Renderer(this).render(options);
   }

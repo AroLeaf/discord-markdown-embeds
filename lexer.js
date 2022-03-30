@@ -1,7 +1,9 @@
 import XRegExp from 'xregexp';
+import yaml from 'yaml';
 import types from './tokens.js';
 
 const regex = {
+  front:          XRegExp(/^\s*---\n(.+)\n---(\s)*/s),
   escape:         XRegExp(/^\\(.)/s),
   command:        XRegExp(/^{(.+?)}/),
   ul:             XRegExp(/^([-*+]) /),
@@ -29,7 +31,12 @@ export default class Lexer {
     this.pos = input.search(XRegExp(/\S/));
     this.tokens = [];
     this.isStart = true;
-    this.lastMatchPos = 0;
+    
+    this.match(regex.front, m => {
+      this.tokens.front = yaml.parse(m[1]);
+      this.pos = m[0].length;
+      this.isStart = m[2]?.includes('\n');
+    });
   }
 
   match(regex, cb = () => true) {
