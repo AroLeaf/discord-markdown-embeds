@@ -20,7 +20,7 @@
   "exports": "./index.js",
   "dependencies": {
     "xregexp": "^5.1.0",
-    "yaml": "^2.0.0-11"
+    "yaml": "^1.10.2"
   },
   "types": "./index.d.ts"
 }
