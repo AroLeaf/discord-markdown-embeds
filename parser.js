@@ -54,7 +54,7 @@ export default class Parser {
           this.push(new Parser(children, {
             type: nodes.paragraph,
           }).parse());
-          this.pos += children.length + 1;
+          this.pos += children.length;
         }, true);
       };
     }

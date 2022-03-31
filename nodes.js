@@ -71,7 +71,7 @@ export class LinkNode extends Node {
 
   render(options = {}) {
     return options.html 
-      ? `<a href="${this.link}" title="${this.title}">${super.render(options)}</a>`
+      ? `<a href="${this.link}" title="${this.title||''}">${super.render(options)}</a>`
       : `[${super.render(options)}](${this.link}${this.title ? ` '${this.title.replace(/[\\']/g, '\\$&')}'` : ''})`;
   }
 }
@@ -90,7 +90,7 @@ export class CodeBlockNode extends Node {
       this.lang = 'plaintext';
     } else {
       this.code = code;
-      this.lang = lang;
+      this.lang = lang || 'plaintext';
     }
   }
 
