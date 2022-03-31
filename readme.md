@@ -62,9 +62,9 @@ Using `-` as title separator
 makes it an inline field.
 
 ## Commands
-Commands are written as follows: {command:arg1,arg2,arg3 can have spaces too}.
+Commands are written as follows: `{command:arg1,arg2,arg3 can have spaces too}``.
 This will be executed through `options.commands.command('arg1', 'arg2', 'arg3 can have spaces too')`.
-Commands may also be static values: {user}.
+Commands may also be static values: `{user}`.
 If `options.commands.user` is not a function it will be stringified and inserted directly.
 Using a command in markdown when it's not defined in the options will cause an error.
 

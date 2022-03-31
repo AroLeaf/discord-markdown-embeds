@@ -50,7 +50,8 @@ export default class Parser {
           || t.type === types.title
           || (t.type === types.link.start && t.value)
         , children => {
-          this.push(new Parser(children.concat(token), {
+          children.unshift(token);
+          this.push(new Parser(children, {
             type: nodes.paragraph,
           }).parse());
           this.pos += children.length + 1;
