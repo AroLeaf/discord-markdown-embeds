@@ -7,7 +7,7 @@ export const Parser = _Parser;
 export const Renderer = _Renderer;
 
 export function render(md, options) {
-  return this.template(md).render(options)
+  return template(md).render(options)
 }
 
 export function template(md) {

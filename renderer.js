@@ -74,7 +74,7 @@ export default class Renderer {
         }
 
         case nodes.image: {
-          this.chunks.push(node.render(options), options);
+          this.chunks.push(node.render(options));
           this.pos++; break;
         }
 
@@ -82,7 +82,6 @@ export default class Renderer {
           this.pos++;
       }
     }
-    
 
     this.pos = 0;
     while(this.chunks[this.pos]) {
