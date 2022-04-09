@@ -30,8 +30,8 @@ export class CommandNode extends Node {
   }
 
   render({ commands = {} } = {}) {
+    if (!(this.command in commands)) throw new Error(`command ${this.command} not found!`);
     const command = commands[this.command];
-    if (!command) throw new Error(`command ${this.command} not found!`);
     return typeof command === 'function' ? command(...this.args) : command.toString();
   }
 }
