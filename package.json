@@ -1,6 +1,5 @@
 {
   "name": "discord-markdown-embeds",
-  "type": "module",
   "version": "2.0.5",
   "decription": "parses markdown into discord's rich embeds",
   "author": {
@@ -17,9 +16,9 @@
     "embeds"
   ],
   "license": "MIT",
-  "exports": "./index.js",
+  "main": "index.js",
   "dependencies": {
-    "xregexp": "^5.1.0",
+    "@khanacademy/simple-markdown": "^0.8.6",
     "yaml": "^1.10.2"
   },
   "types": "./index.d.ts"
