@@ -1,7 +1,8 @@
 # Discord Markdown Embeds
-<!-- I can haz comment -->
 
 This package allows you to create discord embeds from markdown.
+
+<!-- I can haz comment -->
 
 ## Install
 
@@ -54,6 +55,7 @@ color: # may also be a single value, multiple values repeat from the start if mo
 ---
 
 # Embed Markdown
+
 Titles and paragraphs get distributed over as little embeds as necessary.
 
 ##-in
@@ -62,6 +64,7 @@ Using `-` as title separator
 makes it an inline field.
 
 ## Commands
+
 Commands are written as follows: `{command:arg1,arg2,arg3 can have spaces too}`.
 This will be executed through `options.commands.command('arg1', 'arg2', 'arg3 can have spaces too')`.
 Commands may also be static values: `{user}`.
@@ -69,6 +72,7 @@ If `options.commands.user` is not a function it will be stringified and inserted
 Using a command in markdown when it's not defined in the options will cause an error.
 
 ## implemented:
+
 - the above
 - lists
 - styling (*italics*, **bold**, __underline__ and ~~strikethrough~~)
@@ -78,6 +82,7 @@ Using a command in markdown when it's not defined in the options will cause an e
 - yaml front matter (for color, author, footer, timestamp etc)
 
 ## not going to implement:
+
 - tables
 - html syntax
 - image links inside of regular links, styling, or lists
@@ -86,26 +91,35 @@ Using a command in markdown when it's not defined in the options will cause an e
 ## Documentation
 
 ### `DME.render(md: string, options?: renderOptions): embeds`
+
 parses and renders a markdown string into embeds\
 `md`: your markdown\
 `options` options for rendering embeds
 
 ### `DME.template(md: string): template`
+
 parses markdown into a template\
 `md`: your markdown
 
 ### `template`
+
 a template to quickly render the same markdown multiple times with different command values
+
 #### `template.render(options?: renderOptions): embeds`
+
 renders the template\
 `options` options for rendering embeds
 
 ### `embeds: object[]`
+
 an array of discord embed objects
+
 #### `embeds.messages(): object[]`
+
 divides the embeds into message objects, based on discord's restrictions (max 6000 chars / 10 embeds)
 
 ### `renderOptions: object`
+
 `commands`: an object of commands, commands can be functions or values with a `.toString` method\
 `ul`: a string or function, overrides the unordered list item icon
 `ol`: a string or function, overrides the ordered list item icon. If a string, the first occurrence of the character `n` is replaced with the item number.

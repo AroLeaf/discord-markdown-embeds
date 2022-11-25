@@ -18,6 +18,7 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "@aroleaf/parser": "^2.3.1",
     "@khanacademy/simple-markdown": "^0.8.6",
     "yaml": "^1.10.2"
   },

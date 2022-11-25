@@ -1,50 +1,57 @@
 const renderer = {
-  render(node) {
+  render(node, options) {
     if (Array.isArray(node)) return node.map(item => this.render(item)).join('');
     
     switch (node.type) {
-      case 'link': return this.link(node);
-      case 'image': return this.image(node);
-      case 'em': return this.italics(node);
-      case 'strong': return this.bold(node);
-      case 'u': return this.underline(node);
-      case 'del': return this.strikethrough(node);
-      case 'inlineCode': return this.code(node);
-      case 'mention': return this.mention(node);
-      case 'text': return this.text(node);
+      case 'function': return this.function(node, options);
+      case 'link': return this.link(node, options);
+      case 'image': return this.image(node, options);
+      case 'em': return this.italics(node, options);
+      case 'strong': return this.bold(node, options);
+      case 'u': return this.underline(node, options);
+      case 'del': return this.strikethrough(node, options);
+      case 'inlineCode': return this.code(node, options);
+      case 'mention': return this.mention(node, options);
+      case 'text': return this.text(node, options);
       default: throw new Error(`${node.type} not implemented!`);
     }
   },
 
-  link(node) {
-    return `[${this.render(node.content)}](${node.target}, '${node.title}')`;
+  function(node, options) {
+    return node.func(options);
   },
 
-  image(node) {
+  link(node, options) {
+    return `[${this.render(node.content, options)}](${node.target}, '${node.title}')`;
+  },
+
+  image(node, options) {
     return `[${node.alt}](${node.target}, '${node.title}')`;
   },
 
-  italics(node) {
-    return `*${this.render(node.content)}*`;
+  italics(node, options) {
+    const content = this.render(node.content, options);
+    const char = content.startsWith(' ') || content.endsWith(' ') ? '_' : '*';
+    return char + content + char;
   },
 
-  bold(node) {
-    return `**${this.render(node.content)}**`;
+  bold(node, options) {
+    return `**${this.render(node.content, options)}**`;
   },
 
-  underline(node) {
-    return `__${this.render(node.content)}__`;
+  underline(node, options) {
+    return `__${this.render(node.content, options)}__`;
   },
 
-  strikethrough(node) {
-    return `~~${this.render(node.content)}~~`;
+  strikethrough(node, options) {
+    return `~~${this.render(node.content, options)}~~`;
   },
 
-  code(node) {
+  code(node, options) {
     return `\`${node.content}\``;
   },
 
-  mention(node) {
+  mention(node, options) {
     switch (node.mentionType) {
       case 'user': return `<@${node.id}>`;
       case 'role': return `<@&${node.id}>`;
@@ -55,7 +62,7 @@ const renderer = {
     }
   },
 
-  text(node) {
+  text(node, options) {
     return node.content;
   },
 }

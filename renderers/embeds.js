@@ -10,13 +10,13 @@ module.exports = {
     const parts = AST.flatMap(node => {
       switch(node.type) {
         case 'frontmatter': return this.frontmatter(node, options);
+        case 'function': return this.function(node, options);
         case 'heading': return this.heading(node, options);
         case 'inlineHeading': return this.inlineHeading(node, options);
         case 'embedHeading': return this.embedHeading(node, options);
         case 'codeBlock': return this.codeBlock(node, options);
         case 'blockQuote': return this.blockQuote(node, options);
         case 'list': return this.list(node, options);
-        case 'def': return;
         case 'paragraph': return this.paragraph(node, options);
       }
     }).filter(i => i);
@@ -74,7 +74,7 @@ module.exports = {
       if (embed && frontmatter.author && (!embeds.length || frontmatter.author.all)) {
         embed.author = typeof frontmatter.author === 'string' ? { name: frontmatter.author }: frontmatter.author;
         delete embed.author.all;
-        lengths.at(-1) += embed.author.name.length;
+        lengths[lengths.length - 1] += embed.author.name.length;
       }
     }
     
@@ -138,7 +138,7 @@ module.exports = {
           value: field.body?.[options.as]() || { html: '&nbsp;', markdown: '_ _' }[options.as],
           inline: field.title.titleType === 'inline',
         });
-        lengths.at(-1) += fieldSize.title + (fieldSize.body || 3);
+        lengths[lengths.length - 1] += fieldSize.title + (fieldSize.body || 3);
         lengths.body = (fieldSize.body || 3);
         gapSize = field.body?.gapSize || 0;
         continue;
@@ -148,7 +148,7 @@ module.exports = {
         const fieldSize = getFieldSize(field);
         if (embed && !embed.image && !embed.fields?.length && lengths.body + fieldSize.body + Math.min(gapSize, field.body.gapSize) <= 4096) {
           embed.description += ({ html: '<br>', markdown: '\n' }[options.as]).repeat(Math.min(gapSize, field.body.gapSize)) + field.body[options.as]();
-          lengths.at(-1) += fieldSize.body + Math.min(gapSize, field.body.gapSize);
+          lengths[lengths.length - 1] += fieldSize.body + Math.min(gapSize, field.body.gapSize);
           lengths.body += fieldSize.body + Math.min(gapSize, field.body.gapSize);
           gapSize = field.body.gapSize;
           continue;
@@ -156,7 +156,7 @@ module.exports = {
 
         if (embed?.fields?.length && !embed.image && lengths.body + fieldSize.body + Math.min(gapSize, field.body.gapSize) <= 1024) {
           embed.fields.at(-1).value += ({ html: '<br>', markdown: '\n' }[options.as]).repeat(Math.min(gapSize, field.body.gapSize)) + field.body[options.as]();
-          lengths.at(-1) += fieldSize.body + Math.min(gapSize, field.body.gapSize);
+          lengths[lengths.length - 1] += fieldSize.body + Math.min(gapSize, field.body.gapSize);
           lengths.body += fieldSize.body + Math.min(gapSize, field.body.gapSize);
           gapSize = field.body.gapSize;
           continue;
@@ -176,25 +176,13 @@ module.exports = {
           value: field.body[options.as](),
         });
 
-        lengths.at(-1) += 3 + fieldSize.body;
+        lengths[lengths.length - 1] += 3 + fieldSize.body;
         lengths.body = fieldSize.body;
         gapSize = field.body.gapSize;
       }
     }
 
     newEmbed();
-
-    /*
-    color
-    footer
-    thumbnail
-    
-    content
-    allowed_mentions
-    ephemeral
-    avatar_url
-    username
-    */
 
     if (frontmatter.color) {
       const colors = Array.isArray(frontmatter.color) ? frontmatter.color : [frontmatter.color];
@@ -215,6 +203,7 @@ module.exports = {
       else embeds[0].footer = typeof frontmatter.footer === 'string' ? { url: frontmatter.footer } : frontmatter.footer;
     }
 
+    delete lengths.body;
     return Object.assign(embeds, {
       lengths,
       
@@ -252,12 +241,22 @@ module.exports = {
     }
   },
 
+  function(node, options) {
+    const output = node.func(options);
+    return typeof output === 'object' ? output : {
+      type: 'body',
+      gapSize: 2,
+      html: () => `<p>${output}</p>`,
+      markdown: () => output,
+    }
+  },
+
   heading(node, options) {
     return {
       type: 'title',
       titleType: undefined,
-      html: () => `<h3>${inlineRenderers.html(node.content)}</h3>`,
-      markdown: () => inlineRenderers.markdown(node.content),
+      html: () => `<h3>${inlineRenderers.html(node.content, options)}</h3>`,
+      markdown: () => inlineRenderers.markdown(node.content, options),
     }
   },
 
@@ -265,8 +264,8 @@ module.exports = {
     return {
       type: 'title',
       titleType: 'inline',
-      html: () => `<h3>${inlineRenderers.html(node.content)}</h3>`,
-      markdown: () => inlineRenderers.markdown(node.content),
+      html: () => `<h3>${inlineRenderers.html(node.content, options)}</h3>`,
+      markdown: () => inlineRenderers.markdown(node.content, options),
     }
   },
 
@@ -274,8 +273,8 @@ module.exports = {
     return {
       type: 'title',
       titleType: 'embed',
-      html: () => `<h3>${inlineRenderers.html(node.content)}</h3>`,
-      markdown: () => inlineRenderers.markdown(node.content),
+      html: () => `<h3>${inlineRenderers.html(node.content, options)}</h3>`,
+      markdown: () => inlineRenderers.markdown(node.content, options),
     }
   },
 
@@ -296,9 +295,9 @@ module.exports = {
     return {
       type: 'body',
       gapSize: 1,
-      html: () => inlineRenderers.html(node),
+      html: () => inlineRenderers.html(node), options,
       markdown() {
-        const md = inlineRenderers.markdown(node.content);
+        const md = inlineRenderers.markdown(node.content, options);
         return md.split('\n').map(line => `> ${line}`).join('\n');
       },
     }
@@ -310,12 +309,12 @@ module.exports = {
       gapSize: 1,
       html() {
         const tag = node.ordered ? 'ol' : 'ul';
-        return `<${tag}>${node.items.map(item => `<li>${inlineRenderers.html(item)}</li>`.join(''))}</${tag}>`;
+        return `<${tag}>${node.items.map(item => `<li>${inlineRenderers.html(item, options)}</li>`.join(''))}</${tag}>`;
       },
       markdown() {
         return node.ordered
-          ? node.items.map((item, i) => typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1) + inlineRenderers.markdown(item)).join('\n')
-          : node.items.map((item) => (typeof ul === 'string' ? ul : ul()) + inlineRenderers.markdown(item)).join('\n');
+          ? node.items.map((item, i) => typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1) + inlineRenderers.markdown(item, options)).join('\n')
+          : node.items.map((item) => (typeof ul === 'string' ? ul : ul()) + inlineRenderers.markdown(item, options)).join('\n');
       },
     }
   },
@@ -332,8 +331,8 @@ module.exports = {
         type: 'body',
         gapSize: 2,
         items: [],
-        html() { return inlineRenderers.html(this.items) },
-        markdown() { return this.items.map(item => inlineRenderers.markdown(item)).join('') },
+        html() { return inlineRenderers.html(this.items, options) },
+        markdown() { return this.items.map(item => inlineRenderers.markdown(item, options)).join('') },
       });
 
       parts.at(-1).items.push(item);
@@ -345,7 +344,7 @@ module.exports = {
     return {
       type: 'image',
       src: node.target,
-      html: () => inlineRenderers.html(node),
+      html: () => inlineRenderers.html(node, options),
     }
   },
 }

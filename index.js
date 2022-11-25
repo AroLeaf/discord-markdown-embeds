@@ -1,1 +1,22 @@
-//
+const parser = require('./parser.js');
+const renderer = require('./renderers/embeds.js');
+
+module.exports = {
+  render(markdown, options = {}) {
+    return renderer.render(parser.parse(markdown), options);
+  },
+
+  template(markdown) {
+    return {
+      AST: parser.parse(markdown),
+      render(options = {}) {
+        return renderer.render(this.AST, { as: 'markdown', ...options });
+      },
+      renderHTML(options = {}) {
+        return renderer.render(this.AST, { ...options, as: 'html' });
+      },
+    }
+  },
+
+  parser, renderer,
+}

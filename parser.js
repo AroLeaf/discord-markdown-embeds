@@ -1,5 +1,6 @@
 const SimpleMarkdown = require('@khanacademy/simple-markdown');
 const yaml = require('yaml');
+const functions = require('./functions/index.js');
 
 const rules = { ...SimpleMarkdown.defaultRules };
 
@@ -115,6 +116,26 @@ rules.mention = {
       case 'timestamp': `<time data-time="${node.timestamp}" data-format="${node.format}">[Loading]</time>`;
     }
   }
+}
+
+
+rules.function = {
+  order: rules.heading.order - 0.5,
+
+  match(source) {
+    const tokens = functions.tokenize(source);
+    return tokens && Object.assign([source.slice(0, source.length - tokens.at(-1).value.length)], { tokens });
+  },
+
+  parse(capture) {
+    const { tokens } = capture;
+    const func = functions.parse(tokens);
+    return { func };
+  },
+
+  html(node, state) {
+    return node.func(state.options);
+  },
 }
 
 
