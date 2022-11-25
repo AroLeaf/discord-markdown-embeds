@@ -1,6 +1,6 @@
 {
   "name": "discord-markdown-embeds",
-  "version": "2.0.5",
+  "version": "3.0.0-0",
   "decription": "parses markdown into discord's rich embeds",
   "author": {
     "name": "AroLeaf",
