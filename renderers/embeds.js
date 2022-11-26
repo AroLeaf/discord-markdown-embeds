@@ -71,10 +71,14 @@ module.exports = {
     const newEmbed = replaceWith => {
       if (embed) embeds.push(embed);
       embed = replaceWith;
-      if (embed && frontmatter.author && (!embeds.length || frontmatter.author.all)) {
-        embed.author = typeof frontmatter.author === 'string' ? { name: frontmatter.author }: frontmatter.author;
-        delete embed.author.all;
-        lengths[lengths.length - 1] += embed.author.name.length;
+      const getAuthor = author => typeof author === 'string' ? { name: author } : author;
+      const author = embed && frontmatter.author && (
+        (!embeds.length || frontmatter.author.all) && getAuthor(frontmatter.author)
+        || Array.isArray(frontmatter.author) && getAuthor(frontmatter.author[embeds.length % frontmatter.author.length])
+      );
+      if (author) {
+        embed.author = author;
+        lengths[lengths.length - 1] += author.name.length || 0;
       }
     }
     
@@ -194,13 +198,17 @@ module.exports = {
     }
 
     if (frontmatter.footer) {
-      if(frontmatter.footer.all) for (const embed of embeds) embed.footer = frontmatter.footer;
-      else embeds.at(-1).footer = typeof frontmatter.footer === 'string' ? { text: frontmatter.footer } : frontmatter.footer;
+      const getFooter = footer => typeof footer === 'string' ? { text: footer } : footer;
+      if (frontmatter.footer.all) for (const embed of embeds) embed.footer = frontmatter.footer;
+      else if (Array.isArray(frontmatter.footer)) for (let i = 0; i < embeds.length; i++) embeds[i].footer = getFooter(frontmatter.footer[i % frontmatter.footer.length]);
+      else embeds.at(-1).footer = getFooter(frontmatter.footer);
     }
 
     if (frontmatter.thumbnail) {
-      if(frontmatter.thumbnail.all) for (const embed of embeds) embed.thumbnail = frontmatter.thumbnail;
-      else embeds[0].footer = typeof frontmatter.footer === 'string' ? { url: frontmatter.footer } : frontmatter.footer;
+      const getThumbnail = thumbnail => typeof thumbnail === 'string' ? { url: thumbnail } : thumbnail;
+      if (frontmatter.thumbnail.all) for (const embed of embeds) embed.thumbnail = frontmatter.thumbnail;
+      else if (Array.isArray(frontmatter.thumbnail)) for (let i = 0; i < embeds.length; i++) embeds[i].thumbnail = getThumbnail(frontmatter.thumbnail[i % frontmatter.thumbnail.length]);
+      else embeds[0].thumbnail = getThumbnail(frontmatter.thumbnail);
     }
 
     delete lengths.body;
@@ -220,7 +228,12 @@ module.exports = {
         
         return chunks.map((embeds, i) => {
           const message = { embeds };
-          if (frontmatter.content && (frontmatter.content.all || i === 0)) message.content = frontmatter.content.text || frontmatter.content;
+          const getText = content => content.text || content;
+          const content = frontmatter.content && (
+            (frontmatter.content.all || i === 0) && getText(content)
+            || Array.isArray(frontmatter.content) && getText(frontmatter.content[i % frontmatter.content.length])
+          );
+          if (content) message.content = content;
           for (const prop of [
             'allowed_mentions',
             'ephemeral',
@@ -255,7 +268,7 @@ module.exports = {
     return {
       type: 'title',
       titleType: undefined,
-      html: () => `<h3>${inlineRenderers.html(node.content, options)}</h3>`,
+      html: () => inlineRenderers.html(node.content, options),
       markdown: () => inlineRenderers.markdown(node.content, options),
     }
   },
@@ -264,7 +277,7 @@ module.exports = {
     return {
       type: 'title',
       titleType: 'inline',
-      html: () => `<h3>${inlineRenderers.html(node.content, options)}</h3>`,
+      html: () => inlineRenderers.html(node.content, options),
       markdown: () => inlineRenderers.markdown(node.content, options),
     }
   },
@@ -273,7 +286,7 @@ module.exports = {
     return {
       type: 'title',
       titleType: 'embed',
-      html: () => `<h3>${inlineRenderers.html(node.content, options)}</h3>`,
+      html: () => inlineRenderers.html(node.content, options),
       markdown: () => inlineRenderers.markdown(node.content, options),
     }
   },

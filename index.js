@@ -1,5 +1,6 @@
 const parser = require('./parser.js');
 const renderer = require('./renderers/embeds.js');
+const reverser = require('./renderers/reverse.js');
 
 module.exports = {
   render(markdown, options = {}) {
@@ -21,5 +22,10 @@ module.exports = {
     }
   },
 
-  parser, renderer,
+  reverse(messageOrEmbeds) {
+    if (typeof messageOrEmbeds === 'string') messageOrEmbeds = JSON.parse(messageOrEmbeds);
+    return Array.isArray(messageOrEmbeds) ? reverser.reverseEmbeds(messageOrEmbeds) : reverser.reverseMessage(messageOrEmbeds);
+  },
+
+  parser, renderer, reverser,
 }
