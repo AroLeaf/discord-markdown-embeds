@@ -3,7 +3,10 @@ const renderer = require('./renderers/embeds.js');
 
 module.exports = {
   render(markdown, options = {}) {
-    return renderer.render(parser.parse(markdown), options);
+    return renderer.render(parser.parse(markdown), { as: 'markdown', ...options });
+  },
+  renderHTML(markdown, options = {}) {
+    return renderer.render(parser.parse(markdown), { ...options, as: 'html' });
   },
 
   template(markdown) {
