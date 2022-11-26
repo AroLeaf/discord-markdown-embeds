@@ -1,4 +1,4 @@
-const SimpleMarkdown = require('@khanacademy/simple-markdown');
+const SimpleMarkdown = require('@khanacademy/simple-markdown/dist/index.js');
 const yaml = require('yaml');
 const functions = require('./functions/index.js');
 

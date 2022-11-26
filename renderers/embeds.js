@@ -1,4 +1,4 @@
-const SimpleMarkdown = require('@khanacademy/simple-markdown');
+const SimpleMarkdown = require('@khanacademy/simple-markdown/dist/index.js');
 
 const inlineRenderers = {
   html: require('./html.js'),
