@@ -19,7 +19,7 @@ function reverseEmbeds(embeds, extraFrontData = {}) {
   ].filter(part => part).join('\n\n'));
 
   return [
-    frontmatter && `---\n${stringifyYAML(frontmatter)}---`,
+    stringifyFrontmatter(frontmatter),
     body,
   ].filter(part => part).join('\n\n');
 }
@@ -67,10 +67,10 @@ function reverseFooters(embeds) {
   return embeds.map(embed => embed.footer).concat(last);
 }
 
-function stringifyYAML(object) {
+function stringifyFrontmatter(object) {
   const kvPairs = Object.entries(object).filter(([_,v])=>v);
   if (!kvPairs.length) return '';
-  return yaml.stringify(Object.fromEntries(kvPairs));
+  return `---\n${yaml.stringify(Object.fromEntries(kvPairs))}---`;
 }
 
 module.exports = {
