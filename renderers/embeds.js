@@ -230,7 +230,7 @@ module.exports = {
           const message = { embeds };
           const getText = content => content.text || content;
           const content = frontmatter.content && (
-            (frontmatter.content.all || i === 0) && getText(content)
+            (frontmatter.content.all || i === 0) && getText(frontmatter.content)
             || Array.isArray(frontmatter.content) && getText(frontmatter.content[i % frontmatter.content.length])
           );
           if (content) message.content = content;
