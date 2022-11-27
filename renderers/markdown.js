@@ -18,7 +18,11 @@ const renderer = {
   },
 
   function(node, options) {
-    return node.func(options);
+    try {
+      return node.func(options);
+    } catch (error) {
+      return error.toString();
+    }
   },
 
   link(node, options) {

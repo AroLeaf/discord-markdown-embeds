@@ -255,7 +255,12 @@ module.exports = {
   },
 
   function(node, options) {
-    const output = node.func(options);
+    let output;
+    try {
+      output = node.func(options);
+    } catch (error) {
+      output = error.toString();
+    }
     return typeof output === 'object' ? output : {
       type: 'body',
       gapSize: 2,

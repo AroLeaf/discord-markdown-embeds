@@ -18,7 +18,10 @@ function reverseEmbeds(embeds, extraFrontData = {}) {
     embed.image && `![image](${embed.image.url})`,
   ].filter(part => part).join('\n\n'));
 
-  return (frontmatter ? `---\n${yaml.stringify(Object.fromEntries(Object.entries(frontmatter).filter(([k,v])=>v)))}---\n\n` : '') + body;
+  return [
+    frontmatter && `---\n${stringifyYAML(frontmatter)}---`,
+    body,
+  ].filter(part => part).join('\n\n');
 }
 
 function reverseMessage(message) {
@@ -64,6 +67,11 @@ function reverseFooters(embeds) {
   return embeds.map(embed => embed.footer).concat(last);
 }
 
+function stringifyYAML(object) {
+  const kvPairs = Object.entries(object).filter(([_,v])=>v);
+  if (!kvPairs.length) return '';
+  return yaml.stringify(Object.fromEntries(kvPairs));
+}
 
 module.exports = {
   reverseEmbeds, reverseMessage,
