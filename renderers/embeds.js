@@ -321,7 +321,8 @@ module.exports = {
     }
   },
 
-  list(node, { ol = 'n.', ul = '• ' } = {}) {
+  list(node, options = {}) {
+    const { ol = 'n. ', ul = '• ' } = options
     return {
       type: 'body',
       gapSize: 1,
