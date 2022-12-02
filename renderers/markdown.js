@@ -12,6 +12,7 @@ const renderer = {
       case 'del': return this.strikethrough(node, options);
       case 'inlineCode': return this.code(node, options);
       case 'mention': return this.mention(node, options);
+      case 'br': return this.br(node, options);
       case 'text': return this.text(node, options);
       default: throw new Error(`${node.type} not implemented!`);
     }
@@ -64,6 +65,10 @@ const renderer = {
       case 'emoji': return `<${node.animated ? 'a': ''}:${node.name[0]}:${node.id}>`;
       case 'timestamp': return `<t:${node.timestamp}:${node.format === 'f' ? '' : `:${node.format}`}>`;
     }
+  },
+
+  br(node, options) {
+    return '\n';
   },
 
   text(node, options) {
