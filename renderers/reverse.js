@@ -3,10 +3,10 @@ const yaml = require('yaml');
 function reverseEmbeds(embeds, extraFrontData = {}) {
   const frontmatter = {
     ...extraFrontData,
-    author: reverseAuthors(embeds),
-    thumbnail: reverseThumbnails(embeds),
-    footer: reverseFooters(embeds),
-    color: reverseColors(embeds),
+    author: reverseAuthors([...embeds]),
+    thumbnail: reverseThumbnails([...embeds]),
+    footer: reverseFooters([...embeds]),
+    color: reverseColors([...embeds]),
   }
 
   const body = embeds.flatMap(embed => [
