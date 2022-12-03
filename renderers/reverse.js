@@ -44,7 +44,7 @@ function reverseAuthors(embeds) {
     'icon_url',
     'url'
   ].every(k => first.author?.[k] === embed.author?.[k]))) return { ...first.author, all: true };
-  return embeds.map(embed => embed.author);
+  return [first].concat(embeds).map(embed => embed.author);
 }
 
 function reverseThumbnails(embeds) {
@@ -63,7 +63,7 @@ function reverseFooters(embeds) {
     'text',
     'icon_url',
   ].every(k => last.footer?.[k] === embed.footer?.[k]))) return { ...last.footer, all: true };
-  return embeds.map(embed => embed.footer).concat(last);
+  return embeds.concat(last).map(embed => embed.footer);
 }
 
 function stringifyFrontmatter(object) {
