@@ -329,7 +329,7 @@ module.exports = {
       gapSize: 2,
       html() {
         const tag = node.ordered ? 'ol' : 'ul';
-        return `<${tag}>${node.items.map(item => `<li>${inlineRenderers.html(item, options)}</li>`.join(''))}</${tag}>`;
+        return `<${tag}>${node.items.map(item => `<li>${inlineRenderers.html(item, options)}</li>`).join('')}</${tag}>`;
       },
       markdown() {
         return node.ordered
