@@ -43,7 +43,7 @@ function reverseAuthors(embeds) {
     'name',
     'icon_url',
     'url'
-  ].every(k => first.author[k] === embed.author?.[k]))) return { ...first.author, all: true };
+  ].every(k => first.author?.[k] === embed.author?.[k]))) return { ...first.author, all: true };
   return embeds.map(embed => embed.author);
 }
 
@@ -51,7 +51,7 @@ function reverseThumbnails(embeds) {
   if (embeds.every(embed => !embed.thumbnail)) return;
   const first = embeds.shift();
   if (embeds.every(embed => !embed.thumbnail)) return first.thumbnail;
-  if (embeds.every(embed => embed.thumbnail.url === first.thumbnail.url)) return { ...first.thumbnail, all: true };
+  if (embeds.every(embed => embed.thumbnail?.url === first.thumbnail?.url)) return { ...first.thumbnail, all: true };
   return [first].concat(embeds).map(embed => embed.thumbnail);
 }
 
@@ -62,7 +62,7 @@ function reverseFooters(embeds) {
   if (embeds.every(embed => [
     'name',
     'icon_url',
-  ].every(k => last.footer[k] === embed.footer?.[k]))) return { ...last.footer, all: true };
+  ].every(k => last.footer?.[k] === embed.footer?.[k]))) return { ...last.footer, all: true };
   return embeds.map(embed => embed.footer).concat(last);
 }
 
