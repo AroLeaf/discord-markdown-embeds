@@ -9,7 +9,7 @@ function reverseEmbeds(embeds, extraFrontData = {}) {
   }
 
   const body = embeds.flatMap(embed => [
-    embed.title && `#!${embed.title}`,
+    embed.title && `#!${embed.url ? `[${embed.title}](${embed.url})` : embed.title}`,
     embed.description,
     embed.fields && embed.fields.flatMap(field => [
       field.name && (field.name === '_ _' ? '' : `#${field.inline ? '-' : ' '}${field.name}`),

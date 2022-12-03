@@ -174,19 +174,19 @@ rules.fence = {
 
 rules.heading = {
   ...rules.heading,
-  match: SimpleMarkdown.blockRegex(/^ *(#{1,6}) ([^\n]+?)#* *(?:\n *)*\n/),
+  match: SimpleMarkdown.blockRegex(/^ *(#{1,6}) ((?:[^\n\\]|\\.)+?)#* *(?:\n *)*\n/s),
 }
 
 
 rules.inlineHeading = {
   ...rules.heading,
-  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})-([^\n]+?)#* *(?:\n *)*\n/),
+  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})-((?:[^\n\\]|\\.)+?)#* *(?:\n *)*\n/s),
 }
 
 
 rules.embedHeading = {
   ...rules.heading,
-  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})!([^\n]+?)#* *(?:\n *)*\n/),
+  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})!((?:[^\n\\]|\\.)+?)#* *(?:\n *)*\n/s),
 }
 
 
@@ -198,6 +198,12 @@ rules.image = {
       title: node.title,
     });
   },
+}
+
+
+rules.br = {
+  ...rules.br,
+  match: SimpleMarkdown.anyScopeRegex(/^(?: {2,}|\\)\n/),
 }
 
 

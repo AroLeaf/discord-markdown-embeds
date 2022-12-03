@@ -97,6 +97,7 @@ module.exports = {
         newEmbed({
           title: field.title[options.as](),
           description: field.body?.[options.as](),
+          url: field.title.url,
         });
         continue;
       }
@@ -271,29 +272,37 @@ module.exports = {
   },
 
   heading(node, options) {
+    const isUrl = node.content.length === 1 && node.content[0].type === 'link';
+    const content = isUrl ? node.content[0].content : node.content;
     return {
       type: 'title',
-      titleType: undefined,
-      html: () => inlineRenderers.html(node.content, options),
-      markdown: () => inlineRenderers.markdown(node.content, options),
+      titleType: isUrl && 'embed',
+      url: isUrl ? node.content[0].target : undefined,
+      html: () => inlineRenderers.html(content, options),
+      markdown: () => inlineRenderers.markdown(content, options),
     }
   },
 
   inlineHeading(node, options) {
+    const isUrl = node.content.length === 1 && node.content.type === 'link';
+    const content = isUrl ? node.content[0].content : node.content;
     return {
       type: 'title',
       titleType: 'inline',
-      html: () => inlineRenderers.html(node.content, options),
-      markdown: () => inlineRenderers.markdown(node.content, options),
+      html: () => inlineRenderers.html(content, options),
+      markdown: () => inlineRenderers.markdown(content, options),
     }
   },
 
   embedHeading(node, options) {
+    const isUrl = node.content.length === 1 && node.content.type === 'link';
+    const content = isUrl ? node.content[0].content : node.content;
     return {
       type: 'title',
       titleType: 'embed',
-      html: () => inlineRenderers.html(node.content, options),
-      markdown: () => inlineRenderers.markdown(node.content, options),
+      url: isUrl ? node.content[0].target : undefined,
+      html: () => inlineRenderers.html(content, options),
+      markdown: () => inlineRenderers.markdown(content, options),
     }
   },
 
