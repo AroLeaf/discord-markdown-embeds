@@ -9,11 +9,11 @@ function reverseEmbeds(embeds, extraFrontData = {}) {
   }
 
   const body = embeds.flatMap(embed => [
-    embed.title && `#!${embed.url ? `[${embed.title}](${embed.url})` : embed.title}`,
-    embed.description,
+    embed.title && `#!${embed.url ? `[${embed.title.replaceAll('\n', '\\\n')}](${embed.url})` : embed.title.replaceAll('\n', '\\\n')}`,
+    embed.description?.replaceAll('\n', '  \n'),
     embed.fields && embed.fields.flatMap(field => [
-      field.name && (field.name === '_ _' ? '' : `#${field.inline ? '-' : ' '}${field.name}`),
-      field.value && (field.value === '_ _' ? '' : field.value),
+      field.name && (field.name === '_ _' ? '' : `#${field.inline ? '-' : ' '}${field.name.replaceAll('\n', '\\\n')}`),
+      field.value && (field.value === '_ _' ? '' : field.value.replaceAll('\n', '  \n')),
     ]).filter(part => part).join('\n\n'),
     embed.image && `![image](${embed.image.url})`,
   ].filter(part => part).join('\n\n'));
@@ -34,7 +34,6 @@ function reverseMessage(message) {
   }
   return reverseEmbeds(message.embeds, messageData);
 }
-
 
 function reverseAuthors(embeds) {
   if (embeds.every(embed => !embed.author)) return;
