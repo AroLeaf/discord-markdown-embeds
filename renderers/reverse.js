@@ -6,6 +6,7 @@ function reverseEmbeds(embeds, extraFrontData = {}) {
     author: reverseAuthors(embeds),
     thumbnail: reverseThumbnails(embeds),
     footer: reverseFooters(embeds),
+    color: reverseColors(embeds),
   }
 
   const body = embeds.flatMap(embed => [
@@ -33,6 +34,13 @@ function reverseMessage(message) {
     ephemeral: message.ephemeral,
   }
   return reverseEmbeds(message.embeds, messageData);
+}
+
+function reverseColors(embeds) {
+  if (embeds.every(embed => !embed.color)) return;
+  const first = embeds.shift();
+  if (embeds.every(embed => embed.color === first.color)) return first.color;
+  return [first].concat(embeds).map(embed => embed.color);
 }
 
 function reverseAuthors(embeds) {
