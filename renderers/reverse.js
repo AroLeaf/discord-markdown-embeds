@@ -16,7 +16,7 @@ function reverseEmbeds(embeds, extraFrontData = {}) {
       field.value && (field.value === '_ _' ? '' : field.value.replaceAll('\n', '  \n')),
     ]).filter(part => part).join('\n\n'),
     embed.image && `![image](${embed.image.url})`,
-  ].filter(part => part).join('\n\n'));
+  ]).filter(part => part).join('\n\n');
 
   return [
     stringifyFrontmatter(frontmatter),
@@ -60,7 +60,7 @@ function reverseFooters(embeds) {
   const last = embeds.pop();
   if (embeds.every(embed => !embed.footer)) return last.footer;
   if (embeds.every(embed => [
-    'name',
+    'text',
     'icon_url',
   ].every(k => last.footer?.[k] === embed.footer?.[k]))) return { ...last.footer, all: true };
   return embeds.map(embed => embed.footer).concat(last);
