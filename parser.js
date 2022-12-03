@@ -17,11 +17,11 @@ rules.comment = {
   order: -2,
   
   match(source) {
-    return /^<!--.+?-->/.exec(source);
+    return /^<!--.+?-->/s.exec(source);
   },
   
   parse() {
-    return {};
+    return { content: '' };
   },
 }
 
@@ -129,8 +129,12 @@ rules.function = {
 
   parse(capture) {
     const { tokens } = capture;
-    const func = functions.parse(tokens);
-    return { func };
+    try {
+      const func = functions.parse(tokens);
+      return { func };
+    } catch (error) {
+      return { func: () => error.toString() }
+    }
   },
 
   html(node, state) {
@@ -139,27 +143,50 @@ rules.function = {
 }
 
 
+rules.blockQuote = {
+  ...rules.blockQuote,
+  match: SimpleMarkdown.blockRegex(/^( *>[^\n]+(\n[^\n]+)*\n*)\n{2,}/),
+  parse(capture, parse, state) {
+    var content = capture[1].replace(/^ *> ?/gm, "");
+    return {
+      content: SimpleMarkdown.parseInline(parse, content, state),
+    }
+  }
+}
+
+
+rules.list = {
+  ...rules.list,
+  match: SimpleMarkdown.blockRegex(/^ *([*+-]|\d+\.) ((?:(?:\n(?! *(?:[*+-]|\d+\.)))?(?:[^\n]|$))*(?:\n *(?:\1|\d+\.) (?:(?:\n(?! *([*+-]|\d+\.)))?(?:[^\n]|$))*)*) *(?:\n *)*\n/),
+  parse(capture, parse, state) {
+    const splitter = RegExp(`\\n *${capture[1].endsWith('.') ? '\\d+\\.' : '\\' + capture[1]} `);
+    const items = capture[2].split(splitter).map(part => SimpleMarkdown.parseInline(parse, part, state));
+    return { items };
+  },
+}
+
+
 rules.fence = {
   ...rules.fence,
-  match: SimpleMarkdown.blockRegex(/^ *(`{3,}) *(?:(\S+) *)?\n(.+?)\n?\1 *(?:\n *)+\n/s,),
+  match: SimpleMarkdown.blockRegex(/^ *(`{3,}) *(?:(\S+) *)?\n(.+?)\n?\1 *(?:\n *)*\n/s,),
 }
 
 
 rules.heading = {
   ...rules.heading,
-  match: SimpleMarkdown.blockRegex(/^ *(#{1,6}) ([^\n]+?)#* *(?:\n *)+\n/),
+  match: SimpleMarkdown.blockRegex(/^ *(#{1,6}) ([^\n]+?)#* *(?:\n *)*\n/),
 }
 
 
 rules.inlineHeading = {
   ...rules.heading,
-  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})-([^\n]+?)#* *(?:\n *)+\n/),
+  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})-([^\n]+?)#* *(?:\n *)*\n/),
 }
 
 
 rules.embedHeading = {
   ...rules.heading,
-  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})!([^\n]+?)#* *(?:\n *)+\n/),
+  match: SimpleMarkdown.blockRegex(/^ *(#{1,6})!([^\n]+?)#* *(?:\n *)*\n/),
 }
 
 

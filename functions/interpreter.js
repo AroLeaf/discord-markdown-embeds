@@ -39,7 +39,6 @@ const interpreter = {
   },
 
   identifier(token) {
-    console.log(token);
     return (options) => options[token.value];
   },
 

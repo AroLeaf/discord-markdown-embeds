@@ -4,6 +4,7 @@ const renderer = {
     
     switch (node.type) {
       case 'function': return this.function(node, options);
+      case 'paragraph': return this.paragraph(node, options);
       case 'link': return this.link(node, options);
       case 'image': return this.image(node, options);
       case 'em': return this.italics(node, options);
@@ -20,18 +21,22 @@ const renderer = {
 
   function(node, options) {
     try {
-      return node.func(options);
+      return `${node.func(options)}`;
     } catch (error) {
       return error.toString();
     }
   },
 
+  paragraph(node, options) {
+    return node.content.map(item => this.render(item, options)).join('');
+  },
+
   link(node, options) {
-    return `[${this.render(node.content, options)}](${node.target}, '${node.title}')`;
+    return `[${this.render(node.content, options)}](${node.target}${node.title ? `, '${node.title}'` : ''})`;
   },
 
   image(node, options) {
-    return `[${node.alt}](${node.target}, '${node.title}')`;
+    return `[${node.alt}](${node.target}${node.title ? `, '${node.title}'` : ''})`;
   },
 
   italics(node, options) {

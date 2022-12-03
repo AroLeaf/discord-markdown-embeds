@@ -84,6 +84,7 @@ module.exports = {
     
     for (const field of fields) {
       if (field.type === 'image') {
+        if (!embed) newEmbed({});
         embed.image = { url: field.src };
         continue;
       }
@@ -265,7 +266,7 @@ module.exports = {
       type: 'body',
       gapSize: 2,
       html: () => `<p>${output}</p>`,
-      markdown: () => output,
+      markdown: () => `${output}`,
     }
   },
 
@@ -312,7 +313,7 @@ module.exports = {
   blockQuote(node, options) {
     return {
       type: 'body',
-      gapSize: 1,
+      gapSize: 2,
       html: () => inlineRenderers.html(node), options,
       markdown() {
         const md = inlineRenderers.markdown(node.content, options);
@@ -325,7 +326,7 @@ module.exports = {
     const { ol = 'n. ', ul = '• ' } = options
     return {
       type: 'body',
-      gapSize: 1,
+      gapSize: 2,
       html() {
         const tag = node.ordered ? 'ol' : 'ul';
         return `<${tag}>${node.items.map(item => `<li>${inlineRenderers.html(item, options)}</li>`.join(''))}</${tag}>`;
