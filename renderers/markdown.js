@@ -68,7 +68,7 @@ const renderer = {
       case 'channel': return `<#${node.id}>`;
       case 'command': return `<${node.name}:${node.id}>`;
       case 'emoji': return `<${node.animated ? 'a': ''}:${node.name[0]}:${node.id}>`;
-      case 'timestamp': return `<t:${node.timestamp}:${node.format === 'f' ? '' : `:${node.format}`}>`;
+      case 'timestamp': return `<t:${node.timestamp}${node.format === 'f' ? '' : `:${node.format}`}>`;
     }
   },
 
