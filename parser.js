@@ -159,9 +159,10 @@ rules.list = {
   ...rules.list,
   match: SimpleMarkdown.blockRegex(/^ *([*+-]|\d+\.) ((?:(?:\n(?! *(?:[*+-]|\d+\.)))?(?:[^\n]|$))*(?:\n *(?:\1|\d+\.) (?:(?:\n(?! *([*+-]|\d+\.)))?(?:[^\n]|$))*)*) *(?:\n *)*\n/),
   parse(capture, parse, state) {
-    const splitter = RegExp(`\\n *${capture[1].endsWith('.') ? '\\d+\\.' : '\\' + capture[1]} `);
+    const ordered = capture[1].endsWith('.');
+    const splitter = RegExp(`\\n *${ordered ? '\\d+\\.' : '\\' + capture[1]} `);
     const items = capture[2].split(splitter).map(part => SimpleMarkdown.parseInline(parse, part, state));
-    return { items };
+    return { items, ordered };
   },
 }
 

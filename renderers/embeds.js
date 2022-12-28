@@ -55,6 +55,9 @@ module.exports = {
       }
     }
 
+    options.ul ??= frontmatter.ul ?? '• ';
+    options.ol ??= frontmatter.ol ?? 'n. ';
+
     const embeds = [];
     const lengths = Object.assign([], { body: 0 });
     let embed, gapSize = 0;
@@ -213,6 +216,23 @@ module.exports = {
       else embeds[0].thumbnail = getThumbnail(frontmatter.thumbnail);
     }
 
+    if (frontmatter.timestamp) {
+      const getTimestamp = timestamp =>
+        typeof timestamp === 'string' 
+          ? timestamp
+        : typeof timestamp === 'number'
+          ? new Date(timestamp).toISOString()
+        : typeof timestamp === 'boolean'
+          ? timestamp
+            ? new Date().toISOString()
+            : undefined
+        : timestamp.value;
+      
+      if (frontmatter.timestamp.all) for (const embed of embeds) embed.timestamp = frontmatter.timestamp.value;
+      else if (Array.isArray(frontmatter.timestamp)) for (let i = 0; i < embeds.length; i++) embeds[i].timestamp = getTimestamp(frontmatter.timestamp[i % frontmatter.timestamp.length]);
+      else embeds.at(-1).timestamp = getTimestamp(frontmatter.timestamp);
+    }
+
     delete lengths.body;
     return Object.assign(embeds, {
       lengths,
@@ -332,7 +352,6 @@ module.exports = {
   },
 
   list(node, options = {}) {
-    const { ol = 'n. ', ul = '• ' } = options
     return {
       type: 'body',
       gapSize: 2,
@@ -341,8 +360,9 @@ module.exports = {
         return `<${tag}>${node.items.map(item => `<li>${inlineRenderers.html(item, options)}</li>`).join('')}</${tag}>`;
       },
       markdown() {
+        const { ol, ul } = options;
         return node.ordered
-          ? node.items.map((item, i) => typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1) + inlineRenderers.markdown(item, options)).join('\n')
+          ? node.items.map((item, i) => (typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1)) + inlineRenderers.markdown(item, options)).join('\n')
           : node.items.map((item) => (typeof ul === 'string' ? ul : ul()) + inlineRenderers.markdown(item, options)).join('\n');
       },
     }
