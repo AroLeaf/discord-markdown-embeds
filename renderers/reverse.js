@@ -7,6 +7,7 @@ function reverseEmbeds(embeds, extraFrontData = {}) {
     thumbnail: reverseThumbnails([...embeds]),
     footer: reverseFooters([...embeds]),
     color: reverseColors([...embeds]),
+    timestamp: reverseTimestamp([...embeds]),
   }
 
   const body = embeds.flatMap(embed => [
@@ -72,6 +73,14 @@ function reverseFooters(embeds) {
     'icon_url',
   ].every(k => last.footer?.[k] === embed.footer?.[k]))) return { ...last.footer, all: true };
   return embeds.concat(last).map(embed => embed.footer);
+}
+
+function reverseTimestamp(embeds) {
+  if (embeds.every(embed => !embed.timestamp)) return;
+  const last = embeds.pop();
+  if (embeds.every(embed => !embed.timestamp)) return last.timestamp;
+  if (embeds.every(embed => last.timestamp === embed.timestamp)) return { value: last.timestamp, all: true };
+  return embeds.concat(last).map(embed => embed.timestamp);
 }
 
 function stringifyFrontmatter(object) {
