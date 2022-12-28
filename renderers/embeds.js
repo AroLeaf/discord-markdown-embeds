@@ -356,14 +356,16 @@ module.exports = {
       type: 'body',
       gapSize: 2,
       html() {
-        const tag = node.ordered ? 'ol' : 'ul';
-        return `<${tag}>${node.items.map(item => `<li>${inlineRenderers.html(item, options)}</li>`).join('')}</${tag}>`;
+        const { ol, ul } = options;
+        return node.ordered
+          ? `<ol>${node.items.map((item, i) => `<li><span>${SimpleMarkdown.sanitizeText(typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1))}</span>${inlineRenderers.html(item, options)}</li>`).join('')}</ol>`
+          : `<ul>${node.items.map(item => `<li><span>${SimpleMarkdown.sanitizeText(typeof ul === 'string' ? ul : ul())}</span>${inlineRenderers.html(item, options)}</li>`).join('')}</ul>`;
       },
       markdown() {
         const { ol, ul } = options;
         return node.ordered
           ? node.items.map((item, i) => (typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1)) + inlineRenderers.markdown(item, options)).join('\n')
-          : node.items.map((item) => (typeof ul === 'string' ? ul : ul()) + inlineRenderers.markdown(item, options)).join('\n');
+          : node.items.map(item => (typeof ul === 'string' ? ul : ul()) + inlineRenderers.markdown(item, options)).join('\n');
       },
     }
   },
