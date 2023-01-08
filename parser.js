@@ -167,6 +167,12 @@ rules.list = {
 }
 
 
+rules.codeBlock = {
+  ...rules.codeBlock,
+  match: () => false,
+}
+
+
 rules.fence = {
   ...rules.fence,
   match: SimpleMarkdown.blockRegex(/^ *(`{3,}) *(?:(\S+) *)?\n(.+?)\n?\1 *(?:\n *)*\n/s,),
