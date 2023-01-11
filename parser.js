@@ -157,7 +157,7 @@ rules.blockQuote = {
 
 rules.list = {
   ...rules.list,
-  match: SimpleMarkdown.blockRegex(/^ *([*+-]|\d+\.) ((?:(?:\n(?! *(?:[*+-]|\d+\.)))?(?:[^\n]|$))*(?:\n *(?:\1|\d+\.) (?:(?:\n(?! *([*+-]|\d+\.)))?(?:[^\n]|$))*)*) *(?:\n *)*\n/),
+  match: SimpleMarkdown.blockRegex(/^ *([*+-]|\d+\.) ((?:(?:\n(?! *(?:[*+-]|\d+\.) ))?(?:[^\n]|$))*(?:\n *(?:\1|\d+\.) (?:(?:\n(?! *([*+-]|\d+\.) ))?(?:[^\n]|$))*)*) *(?:\n *)*\n/),
   parse(capture, parse, state) {
     const ordered = capture[1].endsWith('.');
     const splitter = RegExp(`\\n *${ordered ? '\\d+\\.' : '\\' + capture[1]} `);
