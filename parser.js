@@ -197,6 +197,12 @@ rules.embedHeading = {
 }
 
 
+rules.escape = {
+  ...rules.escape,
+  match: SimpleMarkdown.inlineRegex(/^\\(.)/s),
+}
+
+
 rules.image = {
   ...rules.image,
   html(node, output, state) {
@@ -208,9 +214,13 @@ rules.image = {
 }
 
 
-rules.br = {
-  ...rules.br,
-  match: SimpleMarkdown.anyScopeRegex(/^(?: {2,}|\\)\n/),
+rules.text = {
+  ...rules.text,
+  parse(capture, parse, state) {
+    return {
+      content: capture[0].replace(/\s+/g, ' '),
+    }
+  }
 }
 
 
