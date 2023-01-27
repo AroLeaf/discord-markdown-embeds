@@ -1,7 +1,10 @@
+let defaults;
+
 const interpreter = {
   interpret(AST) {
+    defaults ??= require('./defaults.js');
     const expression = this.expression(AST.children[0]);
-    return (options) => expression(options);
+    return (options) => expression({ ...defaults, ...options });
   },
 
   expression(expr) {
@@ -19,7 +22,7 @@ const interpreter = {
   call(node) {
     const funcName = node.children.shift().value;
     const expressions = node.children.map(child => this.expression(child));
-    return (options) => options[funcName](...expressions.map(expr => expr(options)));
+    return (options) => options[funcName](options, ...expressions.map(expr => expr(options)));
   },
 
   object(node) {

@@ -7,19 +7,7 @@ const inlineRenderers = {
 
 module.exports = {
   render(AST, options) {
-    const parts = AST.flatMap(node => {
-      switch(node.type) {
-        case 'frontmatter': return this.frontmatter(node, options);
-        case 'function': return this.function(node, options);
-        case 'heading': return this.heading(node, options);
-        case 'inlineHeading': return this.inlineHeading(node, options);
-        case 'embedHeading': return this.embedHeading(node, options);
-        case 'codeBlock': return this.codeBlock(node, options);
-        case 'blockQuote': return this.blockQuote(node, options);
-        case 'list': return this.list(node, options);
-        case 'paragraph': return this.paragraph(node, options);
-      }
-    }).filter(i => i);
+    const parts = this.array(AST, options);
 
     let frontmatter = {};
     
@@ -54,9 +42,6 @@ module.exports = {
         }
       }
     }
-
-    options.ul ??= frontmatter.ul ?? '• ';
-    options.ol ??= frontmatter.ol ?? 'n. ';
 
     const embeds = [];
     const lengths = Object.assign([], { body: 0 });
@@ -269,6 +254,23 @@ module.exports = {
   },
 
 
+  array(nodes, options) {
+    return nodes.flatMap(node => {
+      switch(node.type) {
+        case 'frontmatter': return this.frontmatter(node, options);
+        case 'function': return this.function(node, options);
+        case 'heading': return this.heading(node, options);
+        case 'inlineHeading': return this.inlineHeading(node, options);
+        case 'embedHeading': return this.embedHeading(node, options);
+        case 'codeBlock': return this.codeBlock(node, options);
+        case 'blockQuote': return this.blockQuote(node, options);
+        case 'list': return this.list(node, options);
+        case 'paragraph': return this.paragraph(node, options);
+      }
+    }).filter(i => i);
+  },
+
+
   frontmatter(node, options) {
     return {
       type: 'frontmatter',
@@ -356,13 +358,13 @@ module.exports = {
       type: 'body',
       gapSize: 2,
       html() {
-        const { ol, ul } = options;
+        const { ol = 'n. ', ul = '• ' } = options;
         return node.ordered
           ? `<ol>${node.items.map((item, i) => `<li><span>${SimpleMarkdown.sanitizeText(typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1))}</span>${inlineRenderers.html(item, options)}</li>`).join('')}</ol>`
           : `<ul>${node.items.map(item => `<li><span>${SimpleMarkdown.sanitizeText(typeof ul === 'string' ? ul : ul())}</span>${inlineRenderers.html(item, options)}</li>`).join('')}</ul>`;
       },
       markdown() {
-        const { ol, ul } = options;
+        const { ol = 'n. ', ul = '• ' } = options;
         return node.ordered
           ? node.items.map((item, i) => (typeof ol === 'string' ? ol.replaceAll('n', i + 1) : ol(i + 1)) + inlineRenderers.markdown(item, options)).join('\n')
           : node.items.map(item => (typeof ul === 'string' ? ul : ul()) + inlineRenderers.markdown(item, options)).join('\n');
