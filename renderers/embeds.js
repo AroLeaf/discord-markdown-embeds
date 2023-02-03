@@ -283,6 +283,7 @@ module.exports = {
     try {
       output = node.func(options);
     } catch (error) {
+      console.error(error);
       output = error.toString();
     }
     return typeof output === 'object' ? output : {
@@ -400,4 +401,6 @@ module.exports = {
       html: () => inlineRenderers.html(node, options),
     }
   },
+
+  inline: inlineRenderers,
 }

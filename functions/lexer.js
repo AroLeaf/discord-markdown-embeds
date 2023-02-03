@@ -11,9 +11,12 @@ lexer
 
 lexer
   .token('}*')
-  .matches(/}(.*)$/s)
+  .matches(/}.*$/s)
   .and(() => depth <= 1)
-  .then(() => depth--);
+  .then(t => {
+    depth--;
+    t.value = t.value.slice(1);
+  });
 
 lexer
   .token('}')
@@ -38,11 +41,15 @@ lexer
 
 lexer
   .token('separator')
-  .matches(',');
+  .matches(/;|,/);
 
 lexer
   .token('kv')
   .matches(/=|:/);
+
+lexer
+  .token('prop')
+  .matches('.');
 
 lexer
   .token('string')

@@ -10,6 +10,14 @@ module.exports = {
     return renderer.render(parser.parse(markdown), { ...options, as: 'html' });
   },
 
+  renderInline(markdown, options) {
+    return renderer.inline.markdown(parser.parse(markdown, { inline: true }), options);
+  },
+
+  renderInlineHTML(markdown, options) {
+    return renderer.inline.html(parser.parse(markdown, { inline: true }), options);
+  },
+
   template(markdown) {
     return {
       AST: parser.parse(markdown),

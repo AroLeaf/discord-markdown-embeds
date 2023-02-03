@@ -133,12 +133,18 @@ rules.function = {
       const func = functions.parse(tokens);
       return { func };
     } catch (error) {
+      console.error(error);
       return { func: () => error.toString() }
     }
   },
 
   html(node, state) {
-    return node.func(state.options);
+    try {
+      return node.func(state.options);
+    } catch (error) {
+      console.error(error);
+      return error.toString();
+    }
   },
 }
 

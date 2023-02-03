@@ -9,6 +9,7 @@ const interpreter = {
 
   expression(expr) {
     switch(expr.type) {
+      case 'property': return this.property(expr);
       case 'call': return this.call(expr);
       case 'object': return this.object(expr);
       case 'array': return this.array(expr);
@@ -17,6 +18,14 @@ const interpreter = {
       case 'number': return this.number(expr);
       default: throw new Error(`${expr.type} not implemented`);
     }
+  },
+
+  property(node) {
+    const [object, property] = node.children;
+    const objectExpression = this.expression(object);
+    if (property.type === 'identifier') return (options) => objectExpression(options)[property.value];
+    const propertyExpression = this.expression(property);
+    return (options) => objectExpression(options)[propertyExpression(options)];
   },
 
   call(node) {

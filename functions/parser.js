@@ -1,18 +1,34 @@
 const { Node } = require('@aroleaf/parser');
 
 const program = new Node('program');
+const property = new Node('property');
 const call = new Node('call');
 const object = new Node('object');
 const array = new Node('array');
 const variable = new Node('variable');
 const literal = new Node('literal');
 
-const nestables = [call, object, array, variable, literal];
+const nestables = [property, call, object, array, variable, literal];
 
 program.is(ctx => {
   ctx.discard('{');
   ctx.expect(...nestables);
   ctx.discard('}', '}*');
+});
+
+property.is(ctx => {
+  ctx.expect(call, object, array, variable);
+  const once = () => {
+    if (ctx.ignore('[')) {
+      ctx.expect(...nestables);
+      ctx.discard(']');
+    } else {
+      ctx.discard('prop');
+      ctx.expect('identifier');
+    }
+  }
+  once();
+  while(ctx.assert('prop') || ctx.assert('[')) once();
 });
 
 call.is(ctx => {

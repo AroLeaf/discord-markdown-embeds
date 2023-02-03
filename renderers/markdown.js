@@ -1,6 +1,6 @@
 const renderer = {
   render(node, options) {
-    if (Array.isArray(node)) return node.map(item => this.render(item)).join('');
+    if (Array.isArray(node)) return node.map(item => this.render(item, options)).join('');
     
     switch (node.type) {
       case 'function': return this.function(node, options);
@@ -23,6 +23,7 @@ const renderer = {
     try {
       return `${node.func(options)}`;
     } catch (error) {
+      console.error(error);
       return error.toString();
     }
   },
@@ -81,4 +82,4 @@ const renderer = {
   },
 }
 
-module.exports = node => renderer.render(node);
+module.exports = (node, options) => renderer.render(node, options);
