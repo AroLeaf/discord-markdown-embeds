@@ -21,11 +21,13 @@ const interpreter = {
   },
 
   property(node) {
-    const [object, property] = node.children;
+    const object = node.children[0];
     const objectExpression = this.expression(object);
-    if (property.type === 'identifier') return (options) => objectExpression(options)[property.value];
-    const propertyExpression = this.expression(property);
-    return (options) => objectExpression(options)[propertyExpression(options)];
+    return node.children.slice(1).reduce((a, v) => {
+      if (v.type === 'identifier') return (options) => a(options)[v.value];
+      const propertyExpression = this.expression(v);
+      return (options) => a(options)[propertyExpression(options)];
+    }, objectExpression);
   },
 
   call(node) {
