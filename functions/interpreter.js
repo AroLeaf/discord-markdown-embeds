@@ -1,10 +1,7 @@
-let defaults;
-
 const interpreter = {
   interpret(AST) {
-    defaults ??= require('./defaults.js');
     const expression = this.expression(AST.children[0]);
-    return (options) => expression({ ...defaults, ...options });
+    return (options, defaults = require('./defaults.js')) => expression({ ...defaults, ...options });
   },
 
   expression(expr) {

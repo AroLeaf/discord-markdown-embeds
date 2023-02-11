@@ -122,9 +122,10 @@ rules.mention = {
 rules.function = {
   order: rules.heading.order - 0.5,
 
-  match(source) {
+  match(source, state) {
     const tokens = functions.tokenize(source);
-    return tokens && Object.assign([source.slice(0, source.length - tokens.at(-1).value.length)], { tokens });
+    if (!tokens || !state.inline && !/^ *(?:\n *)+\n|^\s*$/.test(tokens.at(-1).value)) return;
+    return Object.assign([source.slice(0, source.length - tokens.at(-1).value.length)], { tokens });
   },
 
   parse(capture) {
@@ -206,6 +207,12 @@ rules.embedHeading = {
 rules.escape = {
   ...rules.escape,
   match: SimpleMarkdown.inlineRegex(/^\\(.)/s),
+}
+
+
+rules.inlineFunction = {
+  ...rules.function,
+  order: rules.escape.order + 0.5,
 }
 
 

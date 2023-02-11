@@ -1,4 +1,5 @@
 const SimpleMarkdown = require('@khanacademy/simple-markdown/dist/index.js');
+// const parser = require('../parser.js');
 
 const inlineRenderers = {
   html: require('./html.js'),
@@ -7,7 +8,9 @@ const inlineRenderers = {
 
 module.exports = {
   render(AST, options) {
+    options = { ...options };
     const parts = this.array(AST, options);
+    console.log(parts.length);
 
     let frontmatter = {};
     
@@ -272,6 +275,8 @@ module.exports = {
 
 
   frontmatter(node, options) {
+    options.ol ??= node.content.ol;
+    options.ul ??= node.content.ul;
     return {
       type: 'frontmatter',
       data: node.content,
@@ -286,6 +291,7 @@ module.exports = {
       console.error(error);
       output = error.toString();
     }
+    console.log(output);
     return typeof output === 'object' ? output : {
       type: 'body',
       gapSize: 2,
