@@ -10,7 +10,6 @@ module.exports = {
   render(AST, options) {
     options = { ...options };
     const parts = this.array(AST, options);
-    console.log(parts.length);
 
     let frontmatter = {};
     
@@ -291,7 +290,6 @@ module.exports = {
       console.error(error);
       output = error.toString();
     }
-    console.log(output);
     return typeof output === 'object' ? output : {
       type: 'body',
       gapSize: 2,
