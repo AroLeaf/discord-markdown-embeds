@@ -311,7 +311,7 @@ module.exports = {
   },
 
   inlineHeading(node, options) {
-    const isUrl = node.content.length === 1 && node.content.type === 'link';
+    const isUrl = node.content.length === 1 && node.content[0].type === 'link';
     const content = isUrl ? node.content[0].content : node.content;
     return {
       type: 'title',
@@ -322,7 +322,8 @@ module.exports = {
   },
 
   embedHeading(node, options) {
-    const isUrl = node.content.length === 1 && node.content.type === 'link';
+    console.log(node.content);
+    const isUrl = node.content.length === 1 && node.content[0].type === 'link';
     const content = isUrl ? node.content[0].content : node.content;
     return {
       type: 'title',
