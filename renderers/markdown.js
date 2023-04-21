@@ -33,7 +33,7 @@ const renderer = {
   },
 
   link(node, options) {
-    return `[${this.render(node.content, options)}](${node.target}${node.title ? `, '${node.title}'` : ''})`;
+    return `[${this.render(node.content, options)}](${node.target}${node.title ? ` '${node.title}'` : ''})`;
   },
 
   image(node, options) {
